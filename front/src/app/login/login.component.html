@@ -1,0 +1,15 @@
+<p>login !</p>
+<label>Login</label> <input [(ngModel)]="login">
+<br/>
+
+<label>Password</label>
+ <input [(ngModel)]="password">
+
+<br/>
+<button (click) ="connexion ()">Connexion</button>
+<br/>
+<br/>
+
+@if (client$ | async) {
+Bonjour  {{(client$|async).nom}} -  {{(client$|async).prenom}}
+}
