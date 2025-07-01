@@ -7,7 +7,7 @@ on:
       - front
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: emmamau/front
+  IMAGE_NAME: emmamau/frontTemplate
 
 jobs:
   build-and-publish:
