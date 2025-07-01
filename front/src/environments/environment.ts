@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-   backendLoginClient: 'https://api-n7fb.onrender.com//api/utilisateur/login'
+   backendLoginClient: 'https://api-n7fb.onrender.com/api/utilisateur/login'
 };
 
 /*
