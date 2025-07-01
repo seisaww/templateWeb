@@ -7,7 +7,7 @@ on:
       - api
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: emmamau/api
+  IMAGE_NAME: emmamau/apiTemplate
 
 jobs:
   build-and-publish:
