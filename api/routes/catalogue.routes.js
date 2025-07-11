@@ -7,7 +7,7 @@ module.exports = app => {
   
 
    
-    router.get("/", ,catalogue.get);
+    router.get("/", catalogue.get);
   
     app.use('/api/catalogue', router);
   };
