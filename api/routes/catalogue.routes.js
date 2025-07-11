@@ -1,4 +1,4 @@
-const { checkJwt}  = require('./jwtMiddleware');
+
 
 module.exports = app => {
     const catalogue = require("../controllers/catalogue.controllers.js");
@@ -7,7 +7,7 @@ module.exports = app => {
   
 
    
-    router.get("/", checkJwt,catalogue.get);
+    router.get("/", ,catalogue.get);
   
     app.use('/api/catalogue', router);
   };
