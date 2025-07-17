@@ -4,10 +4,10 @@ name: Build and publish
 on:
   push:
     branches:
-      - web
+      - html
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: emmamau/web
+  IMAGE_NAME: emmamau/html
 
 jobs:
   build-and-publish:
