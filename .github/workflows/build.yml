@@ -4,10 +4,10 @@ name: Build and publish
 on:
   push:
     branches:
-      - api
+      - jwt
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: emmamau/api
+  IMAGE_NAME: emmamau/jwt
 
 jobs:
   build-and-publish:
