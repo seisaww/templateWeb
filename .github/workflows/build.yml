@@ -10,7 +10,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: seisaww/apiTemplate
+  IMAGE_NAME: seisaww/templateWeb
 
 jobs:
   build-and-publish:
