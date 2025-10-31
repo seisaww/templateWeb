@@ -3,8 +3,6 @@ module.exports = app => {
   
     var router = require("express").Router();
   
-
-   
     router.get("/", pollution.get);
     router.get("/", pollution.findAll);
   

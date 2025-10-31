@@ -1,13 +1,18 @@
+const { v4: uuidv4 } = require ("uuid");
+
+
+const db = require("../models");
+const Pollution = db.pollution;
+const Op = db.Sequelize.Op;
 
 exports.get = (req, res) => {
-        const pollution = [
-		{ref:"X001", titre : "Linux", prix : 10},
-		{ref:"X002", titre : "Angular", prix : 20}
-		];
-		
-	
-	res.setHeader('Content-Type', 'application/json');
-      
-    res.send(pollution);
-   };    
 
+     Pollution.findAll()
+    .then(data => {res.send(data);})
+    .catch(err => {
+      res.status(400).send({
+        message: err.message
+      });
+    });
+
+}; 
