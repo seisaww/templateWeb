@@ -1,6 +1,5 @@
 const { v4: uuidv4 } = require ("uuid");
 
-
 const db = require("../models");
 const Pollution = db.pollution;
 const Op = db.Sequelize.Op;

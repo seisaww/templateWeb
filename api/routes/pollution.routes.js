@@ -4,7 +4,7 @@ module.exports = app => {
     var router = require("express").Router();
   
     router.get("/", pollution.get);
-    router.get("/", pollution.findAll);
+    // router.get("/", pollution.findAll);
   
     app.use('/api/pollution', router);
   };
