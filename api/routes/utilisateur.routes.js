@@ -1,13 +1,11 @@
-
-
 module.exports = app => {
     const utilisateur = require("../controllers/utilisateur.controllers.js");
   
-    var router = require("express").Router();
+    const router = require("express").Router();
   
-
-    // login utilisateur
-    router.post("/login", utilisateur.login);
+    router.get("/", utilisateur.get);
+    router.get("/:id", utilisateur.findOne);
+    router.post("/", utilisateur.create);
   
     app.use('/api/utilisateur', router);
-  };
+};

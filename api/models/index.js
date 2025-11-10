@@ -9,7 +9,8 @@ const sequelize = new Sequelize(`postgres://${BDD.user}:${BDD.password}@${BDD.ho
       native:true
     },
     define:  {
-    	timestamps:false
+    	timestamps:false,
+      underscored: true
     }
   });
 
@@ -19,5 +20,6 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.pollution = require("./pollution.model.js")(sequelize, Sequelize);
+db.utilisateur = require("./utilisateur.model.js")(sequelize, Sequelize);
 
 module.exports = db;
