@@ -23,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false
     }
   }, {
-    tableName: "utilisateur", // 👈 sans “s” pour correspondre à ta table réelle
+    tableName: "utilisateur", 
     timestamps: false
   });
 

@@ -1,8 +1,8 @@
+const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require ("uuid");
 const db = require("../models");
 const Utilisateurs = db.utilisateur;
 const Op = db.Sequelize.Op;
-
 
 // recupérer tous les users  
 exports.get = (req, res) => {
@@ -39,7 +39,7 @@ exports.findOne = (req, res) => {
 
 
 // pour créer une pollution 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
 
   const champsObligatoire = [
     'nom',
@@ -62,28 +62,38 @@ exports.create = (req, res) => {
     });
     return; 
   }
-  const user = {
-    nom: req.body.nom,
-    prenom: req.body.prenom,
-    identifiant: req.body.identifiant,
-    motDePasse: req.body.motDePasse 
-  };
 
-  Utilisateurs.create(user)
-  .then(data => {
+  try {
+    const salt = await bcrypt.genSalt(10); 
+    const hashedPassword = await bcrypt.hash(req.body.motDePasse, salt);
+
+    const user = {
+      nom: req.body.nom,
+      prenom: req.body.prenom,
+      identifiant: req.body.identifiant,
+      motDePasse: hashedPassword
+    };
+
+    const data = await Utilisateurs.create(user); 
+
     res.status(201).send({
       message: "Utilisateur créé avec succès !",
-      user: data
+      user: {
+          id: data.id,
+          nom: data.nom,
+          prenom: data.prenom,
+          identifiant: data.identifiant
+      }
     });
-  })
-  .catch(err => {
-      res.status(500).send({
-        message: err.message || "Erreur lors de la création de l'utilisateur."
-      });
+
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Erreur lors de la création de l'utilisateur."
     });
+  }
 };
 
-// // Find a single Utilisateur with an login
+// // Find a single Utilisateur with an login   
 // exports.login = (req, res) => {
 //   const utilisateur = {
 //     login: req.body.login,
