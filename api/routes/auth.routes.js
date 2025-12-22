@@ -1,5 +1,5 @@
 module.exports = app => {
-    const auth = require("../controllers/auth.controller.js"); 
+    const auth = require("../controllers/auth.controllers.js"); 
     const router = require("express").Router();
 
     // console.log('auth.routes loaded'); 
