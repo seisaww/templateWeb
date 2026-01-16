@@ -5,15 +5,20 @@ const Op = db.Sequelize.Op;
 
 // récuperer toutes les pollutions 
 exports.get = (req, res) => {
-
-     Pollution.findAll()
-    .then(data => {res.send(data);})
+    const titre = req.query.titre;
+    var condition = titre ? { titre: { [Op.iLike]: `%${titre}%` } } : null;
+    Pollution.findAll({
+      where: condition,
+      include: ["utilisateur"],
+      order: [['date_observation', 'DESC']]
+    })
+    .then(data => {res.send(data);})  
     .catch(err => {
+      console.log(err);
       res.status(400).send({
         message: err.message
       });
     });
-
 }; 
 
 // recupérer une seule pollutions 
