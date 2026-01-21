@@ -1,19 +1,23 @@
-const { Sequelize } = require ("sequelize");
-const { BDD }  = require ('../config');
-const sequelize = new Sequelize(`postgres://${BDD.user}:${BDD.password}@${BDD.host}/${BDD.bdname}`
-,{
+const { Sequelize } = require("sequelize");
+const { BDD } = require('../config');
+
+const sequelize = new Sequelize(BDD.bdname, BDD.user, BDD.password, {
+    host: BDD.host,
+    port: BDD.port,
     dialect: 'postgres',
     protocol: 'postgres',
+    logging: false, 
     dialectOptions: {
-      ssl: true,
-      native:true,
-      rejectUnauthorized: false
+        ssl: {
+            require: true,
+            rejectUnauthorized: false 
+        }
     },
-    define:  {
-    	timestamps:false,
-      underscored: true
+    define: {
+        timestamps: false,
+        underscored: true
     }
-  });
+});
 
 const db = {};
 
@@ -22,5 +26,15 @@ db.sequelize = sequelize;
 
 db.pollution = require("./pollution.model.js")(sequelize, Sequelize);
 db.utilisateur = require("./utilisateur.model.js")(sequelize, Sequelize);
+
+db.utilisateur.hasMany(db.pollution, { 
+    as: "pollutions", 
+    foreignKey: "utilisateurId" 
+});
+
+db.pollution.belongsTo(db.utilisateur, {
+    foreignKey: "id_user",
+    as: "utilisateurId"
+});
 
 module.exports = db;
