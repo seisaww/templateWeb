@@ -2,8 +2,8 @@ const { v4: uuidv4 } = require ("uuid");
 const db = require("../models");
 const Pollution = db.pollution;
 const Op = db.Sequelize.Op;
+const Utilisateur = db.utilisateur;
 
-// récuperer toutes les pollutions 
 exports.get = (req, res) => {
   const titre = req.query.titre;
   const condition = titre ? { titre: { [Op.iLike]: `%${titre}%` } } : null;
@@ -29,24 +29,30 @@ exports.get = (req, res) => {
 
 // recupérer une seule pollutions 
 exports.findOne = (req, res) => {
-    const id = req.params.id;
-     Pollution.findByPk(id)
+  const id = req.params.id;
+
+  Pollution.findByPk(id, {
+    include: [{
+      model: Utilisateur,
+      as: "utilisateur",
+      attributes: ['identifiant', 'nom', 'prenom']
+    }]
+  })
     .then(data => {
       if (data) {
         res.send(data);
       } else {
-        res.status(404).send({ // 404 pour Not Found
-          message: `Pollution non trouvée avec l'id=${id}.`
+        res.status(404).send({
+          message: `Impossible de trouver la pollution avec id=${id}.`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Erreur lors de la récupération de la pollution id=" + id
+        message: "Erreur lors de la récupération id=" + id
       });
     });
-
-}; 
+};
 
 // pour créer une pollution 
 exports.create = (req, res) => {
@@ -85,7 +91,8 @@ exports.create = (req, res) => {
     description: req.body.description,
     latitude: req.body.latitude,
     longitude: req.body.longitude,
-    photo_url: req.body.photo_url
+    photo_url: req.body.photo_url,
+    utilisateurId: req.token.id
   };
 
   Pollution.create(pollution)
@@ -96,6 +103,7 @@ exports.create = (req, res) => {
     });
   })
   .catch(err => {
+      console.error("❌ ERREUR CRÉATION POLLUTION :", err); 
       res.status(500).send({
         message: err.message || "Erreur lors de la création de la pollution."
       });
@@ -103,12 +111,25 @@ exports.create = (req, res) => {
 };
 
 
-// mettre à jour une pollution 
+// mettre à jour une pollution
 exports.update = (req, res) => {
   const id = req.params.id;
+  const userId = req.token.id; 
 
+  Pollution.findByPk(id)
+    .then(data => {
+      if (!data) {
+        return res.status(404).send({ message: `Pollution introuvable avec l'id=${id}.` });
+      }
+
+      if (data.id_user !== userId) {
+        return res.status(403).send({ 
+          message: "Accès interdit : Vous ne pouvez modifier que vos propres signalements." 
+        });
+      }
+      
   Pollution.update(req.body, {
-    where: { id: id}
+  where: { id: id}
   })
     .then(num => {
       if ( num == 1){
@@ -126,29 +147,36 @@ exports.update = (req, res) => {
         message: "Erreur lors de la mise à jour de la pollution id=" + id
       });
     });
+  })
 }
 
 // supprimer une pollution 
 exports.delete = (req, res) => {
   const id = req.params.id;
+  const userId = req.token.id; 
 
-  Pollution.destroy( {
-    where: { id: id}
-  })
-    .then(num => {
-      if ( num == 1){
-        res.send ({
-          message : "Pollution supprimée avec succès."
-        });
-      } else {
-        res.status(404).send ({
-          message : "Suppression impossible, pollution non trouvée."
+  Pollution.findByPk(id)
+    .then(data => {
+      if (!data) {
+        return res.status(404).send({ message: `Pollution introuvable avec l'id=${id}.` });
+      }
+
+      if (data.id_user !== userId) {
+        return res.status(403).send({ 
+          message: "Accès interdit : Vous ne pouvez supprimer que vos propres signalements." 
         });
       }
+
+      Pollution.destroy({ where: { id: id } })
+        .then(num => {
+          if (num == 1) {
+            res.send({ message: "La pollution a été supprimée avec succès !" });
+          } else {
+            res.send({ message: `Impossible de supprimer la pollution avec id=${id}.` });
+          }
+        });
     })
     .catch(err => {
-      res.status(500).send({
-        message: "Erreur lors de la suppresion de la pollution id=" + id
-      });
+      res.status(500).send({ message: "Erreur lors de la suppression id=" + id });
     });
-}
+};
