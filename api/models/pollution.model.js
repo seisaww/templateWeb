@@ -30,6 +30,11 @@ module.exports = (sequelize, Sequelize) => {
     },
     photo_url: {
       type: Sequelize.STRING
+    },
+   utilisateurId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      field: "utilisateurId"
     }
   });
 
