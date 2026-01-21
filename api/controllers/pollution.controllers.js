@@ -122,7 +122,7 @@ exports.update = (req, res) => {
         return res.status(404).send({ message: `Pollution introuvable avec l'id=${id}.` });
       }
 
-      if (data.id_user !== userId) {
+      if (data.id_user !== data.utilisateurId) {
         return res.status(403).send({ 
           message: "Accès interdit : Vous ne pouvez modifier que vos propres signalements." 
         });
@@ -161,7 +161,7 @@ exports.delete = (req, res) => {
         return res.status(404).send({ message: `Pollution introuvable avec l'id=${id}.` });
       }
 
-      if (data.id_user !== userId) {
+      if (data.id_user !== data.utilisateurId) {
         return res.status(403).send({ 
           message: "Accès interdit : Vous ne pouvez supprimer que vos propres signalements." 
         });
