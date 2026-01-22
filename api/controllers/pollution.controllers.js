@@ -64,7 +64,7 @@ exports.create = (req, res) => {
     'type_pollution',
     'description',
     'latitude',
-    'longitude' // photo non présente car non obligatoire
+    'longitude'
   ];
 
   const champsManquant = [];
@@ -75,7 +75,6 @@ exports.create = (req, res) => {
       };
     }
   
-
   if (champsManquant.length > 0) {
     res.status(400).send({
       message: `Les champs suivants sont obligatoires : ${champsManquant.join(', ')}`
@@ -114,7 +113,6 @@ exports.create = (req, res) => {
 // mettre à jour une pollution
 exports.update = (req, res) => {
   const id = req.params.id;
-  
   const userId = req.token.id; 
 
   console.log("🔍 DEBUG UPDATE :");
@@ -128,7 +126,7 @@ exports.update = (req, res) => {
 
       console.log("📝 ID Créateur (DB) :", data.utilisateurId);
 
-      if (data.utilisateurId !== userId) {
+      if (data.utilisateurId != userId) {
         return res.status(403).send({ 
           message: "Accès interdit : Vous ne pouvez modifier que vos propres signalements." 
         });
