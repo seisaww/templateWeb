@@ -25,10 +25,9 @@ app.get("/", (req, res) => {
 
 const db = require("./models");
 
-db.sequelize.sync()
-  .then(() => {
-    console.log("Synced db.");
-  })
+db.sequelize.sync({ alter: true }).then(() => {
+    console.log("✅ Base de données synchronisée (ALTER) !");
+});
   .catch((err) => {
     console.log("Failed to sync db: " + err.message);
   });
