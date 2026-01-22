@@ -1,17 +1,15 @@
-const { checkJwt } = require("./jwtMiddleware");
-module.exports = app => {
-    const pollution = require("../controllers/pollution.controllers.js");
-  
-    const router = require("express").Router();
-  
-    router.get("/", pollution.get);
-    
-    router.get("/:id", pollution.findOne);
+const authJwt = require("./jwtMiddleware.js"); 
+const pollution = require("../controllers/pollution.controllers.js");
 
-    // router.get("/", pollution.findAll);
-    router.post("/", checkJwt, pollution.create);
-    router.delete("/:id", checkJwt, pollution.delete);
-    router.put("/:id", checkJwt, pollution.update);
-  
+module.exports = app => {
+    const router = require("express").Router();
+
+    router.get("/", pollution.get);
+    router.get("/:id", pollution.findOne);
+    
+    router.post("/", [authJwt.checkJwt], pollution.create);
+    router.put("/:id", [authJwt.checkJwt], pollution.update);
+    router.delete("/:id", [authJwt.checkJwt], pollution.delete);
+
     app.use('/api/pollution', router);
-  };
+};
