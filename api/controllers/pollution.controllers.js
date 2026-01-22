@@ -1,4 +1,3 @@
-const { v4: uuidv4 } = require ("uuid");
 const db = require("../models");
 const Pollution = db.pollution;
 const Op = db.Sequelize.Op;
@@ -27,7 +26,6 @@ exports.get = (req, res) => {
   });
 };
 
-// recupérer une seule pollutions 
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
@@ -54,16 +52,10 @@ exports.findOne = (req, res) => {
     });
 };
 
-// pour créer une pollution 
 exports.create = (req, res) => {
   const champsObligatoire = [
-    'titre',
-    'lieu',
-    'date_observation',
-    'type_pollution',
-    'description',
-    'latitude',
-    'longitude'
+    'titre', 'lieu', 'date_observation', 'type_pollution',
+    'description', 'latitude', 'longitude'
   ];
 
   const champsManquant = [];
@@ -79,16 +71,13 @@ exports.create = (req, res) => {
     });
     return; 
   }
-  console.log("DEBUG CREATE :");
-  console.log("Structure du Token :", JSON.stringify(req.token));
+
   let userId;
   if (req.token && req.token.payload) {
       userId = req.token.payload.id;
   } else {
-      userId = req.token.id; 
+      userId = req.token.id;
   }
-
-  console.log("ID Utilisateur final :", userId);
 
   if (!userId) {
       return res.status(500).send({ message: "Erreur interne : Impossible de récupérer l'ID utilisateur." });
@@ -114,29 +103,27 @@ exports.create = (req, res) => {
     });
   })
   .catch(err => {
-      console.error("❌ ERREUR SEQUELIZE :", err); 
       res.status(500).send({
         message: err.message || "Erreur lors de la création de la pollution."
       });
     });
 };
 
-
-// mettre à jour une pollution
 exports.update = (req, res) => {
   const id = req.params.id;
-  const userId = req.token.id;
 
-  console.log("DEBUG UPDATE :");
-  console.log("ID via Token :", userId); 
+  let userId;
+  if (req.token && req.token.payload) {
+      userId = req.token.payload.id;
+  } else {
+      userId = req.token.id;
+  }
 
   Pollution.findByPk(id)
     .then(data => {
       if (!data) {
         return res.status(404).send({ message: `Pollution introuvable.` });
       }
-
-      console.log("📝 ID Créateur (DB) :", data.utilisateurId);
 
       if (data.utilisateurId != userId) {
         return res.status(403).send({ 
@@ -157,13 +144,15 @@ exports.update = (req, res) => {
     .catch(err => res.status(500).send({ message: "Erreur serveur." }));
 };
 
-// supprimer une pollution 
 exports.delete = (req, res) => {
   const id = req.params.id;
-  const userId = req.token.id;
-
-  console.log("DEBUG DELETE :");
-  console.log("ID Utilisateur (Token) :", userId, typeof userId);
+  
+  let userId;
+  if (req.token && req.token.payload) {
+      userId = req.token.payload.id;
+  } else {
+      userId = req.token.id;
+  }
 
   Pollution.findByPk(id)
     .then(data => {
@@ -171,10 +160,7 @@ exports.delete = (req, res) => {
         return res.status(404).send({ message: `Pollution introuvable.` });
       }
 
-      console.log("ID Créateur (DB) :", data.utilisateurId, typeof data.utilisateurId);
-
       if (data.utilisateurId != userId) {
-        console.log("REFUSÉ : Les IDs ne correspondent pas.");
         return res.status(403).send({ 
           message: "Accès interdit : Vous ne pouvez supprimer que vos propres signalements." 
         });
@@ -183,7 +169,6 @@ exports.delete = (req, res) => {
       Pollution.destroy({ where: { id: id } })
         .then(num => {
           if (num == 1) {
-            console.log("SUPPRESSION RÉUSSIE");
             res.send({ message: "Suppression réussie !" });
           } else {
             res.send({ message: `Impossible de supprimer.` });
